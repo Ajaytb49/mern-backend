@@ -8,10 +8,21 @@ dotenv.config();
 connectdb(); 
 const app = express();
 
-app.use(cors({
-    origin: [ 'http://localhost:5173', 'http://localhost:5174' ],
-    credentials: true
-}));
+const devAllowedOrigins = [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://127.0.0.1:3001',
+    'http://127.0.0.1:5173',
+];
+
+if (process.env.NODE_ENV === 'production') {
+    app.use(cors({ origin: devAllowedOrigins, credentials: true }));
+} else {
+    // In development allow requests from common localhost ports to simplify debugging
+    app.use(cors());
+}
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
